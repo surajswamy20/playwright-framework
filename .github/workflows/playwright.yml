@@ -22,7 +22,7 @@ jobs:
             BASE_URL : https://saucedemo.com
             SAUCE_USERNAME : ${{secrets.SAUCE_USERNAME}}
             SAUCE_PASSWORD : ${{secrets.SAUCE_PASSWORD}}
-      run: npx playwright test tests/api/api-assesment.spec.ts tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ta --project=chromium
+      run: npx playwright test tests/api/api-assesment.spec.ts tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=chromium
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
