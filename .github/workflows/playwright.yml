@@ -8,6 +8,10 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast : false
+      matrix:
+        browser: [chromium, firefox]
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -18,16 +22,16 @@ jobs:
       run: npm ci
 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps chromium
+      run: npx playwright install --with-deps ${{matrix.browser}}
     - name: Run Playwright tests
       env :
             BASE_URL : https://saucedemo.com
             SAUCE_USERNAME : ${{secrets.SAUCE_USERNAME}}
             SAUCE_PASSWORD : ${{secrets.SAUCE_PASSWORD}}
-      run: npx playwright test tests/api/api-assesment.spec.ts tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=chromium
+      run: npx playwright test tests/api/api-assesment.spec.ts tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=${{matrix.browser}}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
+        name: playwright-report-${{matrix.browser}}
         path: playwright-report/
         retention-days: 30
