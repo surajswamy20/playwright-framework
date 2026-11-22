@@ -16,7 +16,7 @@ jobs:
       matrix:
         browser: [chromium, firefox]
     steps:
-    - name: Concurrency demo pause
+    - name: Concurrency demo second push
       run: sleep 60
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
