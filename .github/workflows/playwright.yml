@@ -15,6 +15,8 @@ concurrency:
 jobs:
   playwright:
     uses: ./.github/workflows/reusable-playwright.yml
+    with:
+      base_url: https://www.saucedemo.com
     secrets:
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
 

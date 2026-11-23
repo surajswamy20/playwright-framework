@@ -2,6 +2,11 @@ name: Reusable Playwright Tests
 
 on:
   workflow_call:
+    inputs:
+      base_url:
+        type: string
+        required: false
+        default: https://saucedemo.com
     secrets:
       SAUCE_USERNAME:
         required: true
@@ -54,7 +59,7 @@ jobs:
       run: npx playwright install --with-deps ${{matrix.browser}}
     - name: Run Playwright tests
       env :
-            BASE_URL : https://saucedemo.com
+            BASE_URL : ${{inputs.base_url}}
             SAUCE_USERNAME : ${{secrets.SAUCE_USERNAME}}
             SAUCE_PASSWORD : ${{secrets.SAUCE_PASSWORD}}
       run: npx playwright test tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=${{matrix.browser}}
