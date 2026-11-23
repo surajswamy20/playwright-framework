@@ -58,6 +58,7 @@ jobs:
       run: npx playwright test tests/api/api-assesment.spec.ts tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=${{matrix.browser}}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
+      
       with:
         name: playwright-report-${{matrix.browser}}
         path: playwright-report/
