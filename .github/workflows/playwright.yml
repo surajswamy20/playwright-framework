@@ -8,7 +8,7 @@ concurrency :
   group: ${{github.workflow}}-${{github.ref}}
   cancel-in-progress: true
 jobs:
-    api:
+  api:
       runs-on : ubuntu-latest
       timeout-minutes: 60
       steps:
@@ -30,8 +30,8 @@ jobs:
            path: playwright-report/
            retention-days: 30
 
-    ui:
-     needs: api
+  ui:
+    needs: api
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
