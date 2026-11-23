@@ -1,0 +1,67 @@
+name: Reusable Playwright Tests
+
+on:
+  workflow_call:
+    secrets:
+      SAUCE_USERNAME:
+        required: true
+      SAUCE_PASSWORD:
+        required: true
+jobs:
+  api:
+      runs-on : ubuntu-latest 
+      timeout-minutes: 60
+      steps:
+       - uses: actions/checkout@v4
+       - uses: actions/setup-node@v4
+         with:
+          node-version: lts/*
+          cache: npm
+       - name: Install dependencies
+         run: npm ci
+    
+       - name: Run API tests
+         run: npx playwright test tests/api/api-assesment.spec.ts --project=chromium
+
+       -  uses: actions/upload-artifact@v4
+          if: ${{!cancelled()}}
+          with:
+           name: playwright-report-api
+           path: playwright-report/
+           retention-days: 30
+
+      
+
+  ui:
+    needs: api
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast : false
+      matrix:
+        browser: [chromium, firefox]
+    steps:
+    
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: npm
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps ${{matrix.browser}}
+    - name: Run Playwright tests
+      env :
+            BASE_URL : https://saucedemo.com
+            SAUCE_USERNAME : ${{secrets.SAUCE_USERNAME}}
+            SAUCE_PASSWORD : ${{secrets.SAUCE_PASSWORD}}
+      run: npx playwright test tests/e2e/ci-smoke.spec.ts tests/e2e/ci-login.spec.ts --project=${{matrix.browser}}
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      
+      with:
+        name: playwright-report-${{matrix.browser}}
+        path: playwright-report/
+        retention-days: 30
